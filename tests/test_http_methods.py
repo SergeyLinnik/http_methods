@@ -3,22 +3,19 @@
 Тесты для HTTP методов.
 """
 
-# СНАЧАЛА: ИМПОРТЫ СТАНДАРТНЫХ БИБЛИОТЕК
 import sys
 import os
 
-# ПОТОМ: НАСТРОЙКА ПУТИ
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# ЗАТЕМ: ИМПОРТ ИЗ ПРОЕКТА
-from http_methods import HTTP_methods
+from http_methods import HTTPMethods
 
 
 def test_get_method() -> None:
     """Тест GET запроса."""
     print("\n🔍 Тест GET метода...")
     url = "https://api.chucknorris.io/jokes/random"
-    response = HTTP_methods.get(url)
+    response = HTTPMethods.get(url)
     print(f"   URL: {url}")
     print(f"   Статус-код: {response.status_code}")
     assert response.status_code == 200, f"GET вернул {response.status_code}"
@@ -30,7 +27,7 @@ def test_post_method() -> None:
     print("\n📮 Тест POST метода...")
     url = "https://jsonplaceholder.typicode.com/posts"
     body = {"title": "Test post", "body": "This is a test post", "userId": 1}
-    response = HTTP_methods.post(url, body)
+    response = HTTPMethods.post(url, body)
     print(f"   URL: {url}")
     print(f"   Body: {body}")
     print(f"   Статус-код: {response.status_code}")
@@ -43,7 +40,7 @@ def test_put_method() -> None:
     print("\n📝 Тест PUT метода...")
     url = "https://jsonplaceholder.typicode.com/posts/1"
     body = {"id": 1, "title": "Updated title", "body": "Updated body", "userId": 1}
-    response = HTTP_methods.put(url, body)
+    response = HTTPMethods.put(url, body)
     print(f"   URL: {url}")
     print(f"   Body: {body}")
     print(f"   Статус-код: {response.status_code}")
@@ -55,7 +52,7 @@ def test_delete_method() -> None:
     """Тест DELETE запроса."""
     print("\n🗑️ Тест DELETE метода...")
     url = "https://jsonplaceholder.typicode.com/posts/1"
-    response = HTTP_methods.delete(url)
+    response = HTTPMethods.delete(url)
     print(f"   URL: {url}")
     print(f"   Статус-код: {response.status_code}")
     assert response.status_code in [200, 204], f"DELETE вернул {response.status_code}"

@@ -5,10 +5,10 @@
 """
 
 import requests
-from typing import Optional, Dict, Any
+from typing import Optional
 
 
-class HTTP_methods:
+class HTTPMethods:
     """
     Класс для выполнения HTTP запросов.
     Содержит статические методы для GET, POST, PUT, DELETE.
@@ -19,16 +19,16 @@ class HTTP_methods:
     # ОБЩИЕ НАСТРОЙКИ ДЛЯ ВСЕХ ЗАПРОСОВ
     # ------------------------------------------------------------------------
 
-    headers: Dict[str, str] = {'Content-Type': 'application/json'}
-    cookie: Dict[str, str] = {}
+    headers: dict[str, str] = {'Content-Type': 'application/json'}
+    cookie: dict[str, str] = {}
 
     # ------------------------------------------------------------------------
     # МЕТОД GET
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def get(url: str, headers: Optional[Dict[str, str]] = None,
-            cookies: Optional[Dict[str, str]] = None) -> requests.Response:
+    def get(url: str, headers: Optional[dict[str, str]] = None,
+            cookies: Optional[dict[str, str]] = None) -> requests.Response:
         """
         Выполнение GET запроса.
 
@@ -40,11 +40,11 @@ class HTTP_methods:
         Returns:
             Response объект
         """
-        final_headers = HTTP_methods.headers.copy()
+        final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
 
-        final_cookies = HTTP_methods.cookie.copy()
+        final_cookies = HTTPMethods.cookie.copy()
         if cookies:
             final_cookies.update(cookies)
 
@@ -56,9 +56,9 @@ class HTTP_methods:
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def post(url: str, body: Dict[str, Any],
-             headers: Optional[Dict[str, str]] = None,
-             cookies: Optional[Dict[str, str]] = None) -> requests.Response:
+    def post(url: str, body: dict,
+             headers: Optional[dict[str, str]] = None,
+             cookies: Optional[dict[str, str]] = None) -> requests.Response:
         """
         Выполнение POST запроса.
 
@@ -71,11 +71,11 @@ class HTTP_methods:
         Returns:
             Response объект
         """
-        final_headers = HTTP_methods.headers.copy()
+        final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
 
-        final_cookies = HTTP_methods.cookie.copy()
+        final_cookies = HTTPMethods.cookie.copy()
         if cookies:
             final_cookies.update(cookies)
 
@@ -88,9 +88,9 @@ class HTTP_methods:
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def put(url: str, body: Dict[str, Any],
-            headers: Optional[Dict[str, str]] = None,
-            cookies: Optional[Dict[str, str]] = None) -> requests.Response:
+    def put(url: str, body: dict,
+            headers: Optional[dict[str, str]] = None,
+            cookies: Optional[dict[str, str]] = None) -> requests.Response:
         """
         Выполнение PUT запроса.
 
@@ -103,11 +103,11 @@ class HTTP_methods:
         Returns:
             Response объект
         """
-        final_headers = HTTP_methods.headers.copy()
+        final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
 
-        final_cookies = HTTP_methods.cookie.copy()
+        final_cookies = HTTPMethods.cookie.copy()
         if cookies:
             final_cookies.update(cookies)
 
@@ -120,9 +120,9 @@ class HTTP_methods:
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def delete(url: str, body: Optional[Dict[str, Any]] = None,
-               headers: Optional[Dict[str, str]] = None,
-               cookies: Optional[Dict[str, str]] = None) -> requests.Response:
+    def delete(url: str, body: Optional[dict] = None,
+               headers: Optional[dict[str, str]] = None,
+               cookies: Optional[dict[str, str]] = None) -> requests.Response:
         """
         Выполнение DELETE запроса.
 
@@ -135,11 +135,11 @@ class HTTP_methods:
         Returns:
             Response объект
         """
-        final_headers = HTTP_methods.headers.copy()
+        final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
 
-        final_cookies = HTTP_methods.cookie.copy()
+        final_cookies = HTTPMethods.cookie.copy()
         if cookies:
             final_cookies.update(cookies)
 

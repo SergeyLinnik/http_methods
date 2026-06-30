@@ -3,6 +3,6 @@
 Package for HTTP methods.
 """
 
-from http_methods.http_methods import HTTP_methods
+from .http_methods import HTTPMethods
 
-__all__ = ["HTTP_methods"]
+__all__ = ["HTTPMethods"]
