@@ -4,8 +4,6 @@
 Содержит методы для выполнения запросов к Google Maps API.
 """
 
-from typing import Optional
-
 from http_methods import HTTPMethods
 
 
@@ -70,12 +68,10 @@ class GoogleMapsAPI:
         print(f"   URL: {url}")
         print(f"   Body: {body}")
 
-        # Выполнение POST запроса через HTTPMethods
         response = HTTPMethods.post(url, body)
 
         print(f"   Статус-код: {response.status_code}")
 
-        # Проверка через assert (без try-except)
         assert response.status_code == 200, \
             f"Ожидался статус 200, получен {response.status_code}"
 
@@ -87,4 +83,47 @@ class GoogleMapsAPI:
         assert place_id is not None, "В ответе отсутствует поле place_id"
 
         print(f"   ✅ Место создано! place_id: {place_id}")
+        return response_json
+
+    # ------------------------------------------------------------------------
+    # МЕТОД GET: ПОЛУЧЕНИЕ МЕСТА ПО PLACE_ID
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def get_place(place_id: str) -> dict:
+        """
+        Получение данных о месте через GET запрос к Google Maps API.
+
+        Args:
+            place_id: Идентификатор места
+
+        Returns:
+            Данные о месте в виде словаря
+
+        Raises:
+            AssertionError: Если запрос не удался или место не найдено
+        """
+        url: str = (
+            f"{GoogleMapsAPI.BASE_URL}"
+            f"/maps/api/place/get/json"
+            f"?key={GoogleMapsAPI.API_KEY}"
+            f"&place_id={place_id}"
+        )
+
+        print(f"\n📡 GET запрос к Google Maps API")
+        print(f"   URL: {url}")
+
+        response = HTTPMethods.get(url)
+
+        print(f"   Статус-код: {response.status_code}")
+
+        assert response.status_code == 200, \
+            f"Ожидался статус 200, получен {response.status_code}"
+
+        response_json: dict = response.json()
+
+        if "msg" in response_json:
+            assert False, f"Место не найдено: {response_json.get('msg')}"
+
+        print(f"   ✅ Данные о месте получены")
         return response_json
