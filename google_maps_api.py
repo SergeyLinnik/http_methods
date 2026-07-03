@@ -172,7 +172,6 @@ class GoogleMapsAPI:
 
         response_json: dict = response.json()
 
-        # Проверка, что адрес обновлен успешно
         assert "msg" in response_json, \
             f"В ответе отсутствует поле 'msg': {response_json}"
 
@@ -181,6 +180,74 @@ class GoogleMapsAPI:
 
         print(f"   ✅ Адрес обновлен: {response_json.get('msg')}")
         return response_json
+
+    # ------------------------------------------------------------------------
+    # МЕТОД DELETE: УДАЛЕНИЕ МЕСТА
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def delete_place(place_id: str) -> dict:
+        """
+        Удаление места через DELETE запрос к Google Maps API.
+
+        Args:
+            place_id: Идентификатор места
+
+        Returns:
+            Ответ API в виде словаря
+
+        Raises:
+            AssertionError: Если запрос не удался
+        """
+        url: str = (
+            f"{GoogleMapsAPI.BASE_URL}"
+            f"/maps/api/place/delete/json"
+            f"?key={GoogleMapsAPI.API_KEY}"
+        )
+
+        body: dict = {
+            "place_id": place_id
+        }
+
+        print(f"\n🗑️ DELETE запрос к Google Maps API")
+        print(f"   URL: {url}")
+        print(f"   Body: {body}")
+
+        response = HTTPMethods.delete(url, body)
+
+        print(f"   Статус-код: {response.status_code}")
+
+        assert response.status_code == 200, \
+            f"Ожидался статус 200, получен {response.status_code}"
+
+        response_json: dict = response.json()
+
+        assert response_json.get("status") == "OK", \
+            f"Статус ответа не 'OK': {response_json}"
+
+        print(f"   ✅ Место удалено!")
+        return response_json
+
+    # ------------------------------------------------------------------------
+    # ДОПОЛНИТЕЛЬНЫЙ МЕТОД: ПРОВЕРКА СУЩЕСТВОВАНИЯ МЕСТА
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def place_exists(place_id: str) -> bool:
+        """
+        Проверка существования места по place_id.
+
+        Args:
+            place_id: Идентификатор места
+
+        Returns:
+            True если место существует, False если нет
+        """
+        try:
+            GoogleMapsAPI.get_place(place_id)
+            return True
+        except AssertionError:
+            return False
 
     # ------------------------------------------------------------------------
     # ДОПОЛНИТЕЛЬНЫЙ МЕТОД: ПРОВЕРКА ОБНОВЛЕНИЯ АДРЕСА
