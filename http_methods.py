@@ -150,3 +150,34 @@ class HTTPMethods:
             result = requests.delete(url, headers=final_headers,
                                      cookies=final_cookies)
         return result
+
+    # ------------------------------------------------------------------------
+    # НОВЫЙ МЕТОД: ПРОВЕРКА СТАТУС-КОДА
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def check_status_code(response: requests.Response, expected_status: int) -> bool:
+        """
+        Проверка статус-кода ответа.
+
+        Args:
+            response: Response объект
+            expected_status: Ожидаемый статус-код
+
+        Returns:
+            True если статус-код совпадает, иначе False
+
+        Raises:
+            AssertionError: Если статус-код не совпадает
+        """
+        actual_status: int = response.status_code
+
+        print(f"\n🔍 Проверка статус-кода:")
+        print(f"   Ожидаемый статус: {expected_status}")
+        print(f"   Фактический статус: {actual_status}")
+
+        assert actual_status == expected_status, \
+            f"Статус-код не совпадает! Ожидался {expected_status}, получен {actual_status}"
+
+        print(f"   ✅ Статус-код {actual_status} соответствует ожидаемому")
+        return True
