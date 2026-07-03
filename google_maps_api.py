@@ -127,3 +127,82 @@ class GoogleMapsAPI:
 
         print(f"   ✅ Данные о месте получены")
         return response_json
+
+    # ------------------------------------------------------------------------
+    # МЕТОД PUT: ОБНОВЛЕНИЕ АДРЕСА МЕСТА
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def update_place(place_id: str, new_address: str) -> dict:
+        """
+        Обновление адреса места через PUT запрос к Google Maps API.
+
+        Args:
+            place_id: Идентификатор места
+            new_address: Новый адрес
+
+        Returns:
+            Ответ API в виде словаря
+
+        Raises:
+            AssertionError: Если запрос не удался
+        """
+        url: str = (
+            f"{GoogleMapsAPI.BASE_URL}"
+            f"/maps/api/place/update/json"
+            f"?key={GoogleMapsAPI.API_KEY}"
+        )
+
+        body: dict = {
+            "place_id": place_id,
+            "address": new_address,
+            "key": GoogleMapsAPI.API_KEY
+        }
+
+        print(f"\n📡 PUT запрос к Google Maps API")
+        print(f"   URL: {url}")
+        print(f"   Body: {body}")
+
+        response = HTTPMethods.put(url, body)
+
+        print(f"   Статус-код: {response.status_code}")
+
+        assert response.status_code == 200, \
+            f"Ожидался статус 200, получен {response.status_code}"
+
+        response_json: dict = response.json()
+
+        # Проверка, что адрес обновлен успешно
+        assert "msg" in response_json, \
+            f"В ответе отсутствует поле 'msg': {response_json}"
+
+        assert "updated" in response_json["msg"].lower(), \
+            f"Адрес не обновлен: {response_json.get('msg')}"
+
+        print(f"   ✅ Адрес обновлен: {response_json.get('msg')}")
+        return response_json
+
+    # ------------------------------------------------------------------------
+    # ДОПОЛНИТЕЛЬНЫЙ МЕТОД: ПРОВЕРКА ОБНОВЛЕНИЯ АДРЕСА
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def verify_address_updated(place_id: str, expected_address: str) -> bool:
+        """
+        Проверка, что адрес был обновлен (через GET запрос).
+
+        Args:
+            place_id: Идентификатор места
+            expected_address: Ожидаемый адрес
+
+        Returns:
+            True если адрес совпадает, False если нет
+        """
+        place_data = GoogleMapsAPI.get_place(place_id)
+        actual_address: str = place_data.get("address", "")
+
+        print(f"\n   🔍 Проверка обновления адреса:")
+        print(f"   Ожидаемый адрес: {expected_address}")
+        print(f"   Фактический адрес: {actual_address}")
+
+        return actual_address == expected_address
