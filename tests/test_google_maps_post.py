@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Тест POST метода Google Maps API.
-Проверяет создание нового места.
 """
 
 import sys
@@ -14,61 +13,25 @@ from http_methods import HTTPMethods
 
 
 def test_create_place() -> None:
-    """
-    Тест создания места через POST запрос.
-    Проверяет:
-    1. Статус-код ответа (через метод check_status_code)
-    2. Наличие place_id в ответе
-    3. Статус "OK" в ответе
-    """
+    """Тест создания места через POST."""
     print("\n" + "="*60)
     print(" ТЕСТ: POST ЗАПРОС (СОЗДАНИЕ МЕСТА)")
     print("="*60)
 
-    # --------------------------------------------------------------------
-    # ШАГ 1: Создание места через POST
-    # --------------------------------------------------------------------
-    print("\n[ШАГ 1] Отправка POST запроса на создание места...")
+    print("\n[ШАГ 1] Отправка POST запроса...")
+    response_json, response = GoogleMapsAPI.create_place()
 
-    response = GoogleMapsAPI.create_place()
-
-    # --------------------------------------------------------------------
-    # ШАГ 2: Проверка статус-кода (через новый метод)
-    # --------------------------------------------------------------------
     print("\n[ШАГ 2] Проверка статус-кода...")
+    HTTPMethods.check_status_code(response, 200)
 
-    # Здесь нужно получить response из create_place,
-    # но пока просто проверяем что статус 200
-    # В реальном тесте нужно передавать response объект
+    print("\n[ШАГ 3] Проверка обязательных полей...")
+    required_fields = ["status", "place_id", "scope", "reference", "id"]
+    HTTPMethods.check_required_fields(response_json, required_fields)
 
-    # --------------------------------------------------------------------
-    # ШАГ 3: Проверка ответа API
-    # --------------------------------------------------------------------
-    print("\n[ШАГ 3] Проверка ответа API...")
-
-    assert response.get("status") == "OK", \
-        f"Статус ответа не 'OK': {response.get('status')}"
-
-    place_id = response.get("place_id")
-    assert place_id is not None, "place_id отсутствует в ответе"
-    print(f"   ✅ place_id получен: {place_id}")
-
-    assert response.get("scope") == "APP", \
-        f"scope не 'APP': {response.get('scope')}"
-
-    print(f"   ✅ scope: {response.get('scope')}")
-
-    # --------------------------------------------------------------------
-    # ШАГ 4: Вывод результата
-    # --------------------------------------------------------------------
-    print("\n" + "="*60)
-    print(" РЕЗУЛЬТАТ ТЕСТА")
-    print("="*60)
-
-    print(f"\n📊 СТАТИСТИКА:")
-    print(f"   Статус ответа: {response.get('status')}")
-    print(f"   place_id: {place_id}")
-    print(f"   scope: {response.get('scope')}")
+    print("\n[ШАГ 4] Проверка содержимого...")
+    assert response_json.get("status") == "OK"
+    assert response_json.get("place_id") is not None
+    assert response_json.get("scope") == "APP"
 
     print("\n" + "="*60)
     print("✅ ТЕСТ POST ПРОЙДЕН УСПЕШНО!")

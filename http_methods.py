@@ -5,7 +5,7 @@
 """
 
 import requests
-from typing import Optional
+from typing import Optional, List, Any
 
 
 class HTTPMethods:
@@ -29,17 +29,7 @@ class HTTPMethods:
     @staticmethod
     def get(url: str, headers: Optional[dict[str, str]] = None,
             cookies: Optional[dict[str, str]] = None) -> requests.Response:
-        """
-        Выполнение GET запроса.
-
-        Args:
-            url: URL для запроса
-            headers: Дополнительные headers (опционально)
-            cookies: Дополнительные cookies (опционально)
-
-        Returns:
-            Response объект
-        """
+        """Выполнение GET запроса."""
         final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
@@ -59,18 +49,7 @@ class HTTPMethods:
     def post(url: str, body: dict,
              headers: Optional[dict[str, str]] = None,
              cookies: Optional[dict[str, str]] = None) -> requests.Response:
-        """
-        Выполнение POST запроса.
-
-        Args:
-            url: URL для запроса
-            body: Тело запроса (JSON)
-            headers: Дополнительные headers (опционально)
-            cookies: Дополнительные cookies (опционально)
-
-        Returns:
-            Response объект
-        """
+        """Выполнение POST запроса."""
         final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
@@ -91,18 +70,7 @@ class HTTPMethods:
     def put(url: str, body: dict,
             headers: Optional[dict[str, str]] = None,
             cookies: Optional[dict[str, str]] = None) -> requests.Response:
-        """
-        Выполнение PUT запроса.
-
-        Args:
-            url: URL для запроса
-            body: Тело запроса (JSON)
-            headers: Дополнительные headers (опционально)
-            cookies: Дополнительные cookies (опционально)
-
-        Returns:
-            Response объект
-        """
+        """Выполнение PUT запроса."""
         final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
@@ -123,18 +91,7 @@ class HTTPMethods:
     def delete(url: str, body: Optional[dict] = None,
                headers: Optional[dict[str, str]] = None,
                cookies: Optional[dict[str, str]] = None) -> requests.Response:
-        """
-        Выполнение DELETE запроса.
-
-        Args:
-            url: URL для запроса
-            body: Тело запроса (JSON, опционально)
-            headers: Дополнительные headers (опционально)
-            cookies: Дополнительные cookies (опционально)
-
-        Returns:
-            Response объект
-        """
+        """Выполнение DELETE запроса."""
         final_headers = HTTPMethods.headers.copy()
         if headers:
             final_headers.update(headers)
@@ -152,7 +109,7 @@ class HTTPMethods:
         return result
 
     # ------------------------------------------------------------------------
-    # НОВЫЙ МЕТОД: ПРОВЕРКА СТАТУС-КОДА
+    # МЕТОД ПРОВЕРКИ СТАТУС-КОДА
     # ------------------------------------------------------------------------
 
     @staticmethod
@@ -165,7 +122,7 @@ class HTTPMethods:
             expected_status: Ожидаемый статус-код
 
         Returns:
-            True если статус-код совпадает, иначе False
+            True если статус-код совпадает
 
         Raises:
             AssertionError: Если статус-код не совпадает
@@ -180,4 +137,39 @@ class HTTPMethods:
             f"Статус-код не совпадает! Ожидался {expected_status}, получен {actual_status}"
 
         print(f"   ✅ Статус-код {actual_status} соответствует ожидаемому")
+        return True
+
+    # ------------------------------------------------------------------------
+    # НОВЫЙ МЕТОД: ПРОВЕРКА НАЛИЧИЯ ОБЯЗАТЕЛЬНЫХ ПОЛЕЙ
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def check_required_fields(data: dict, required_fields: List[str]) -> bool:
+        """
+        Проверка наличия обязательных полей в словаре.
+
+        Args:
+            data: Словарь с данными для проверки
+            required_fields: Список обязательных полей
+
+        Returns:
+            True если все поля присутствуют
+
+        Raises:
+            AssertionError: Если какое-то поле отсутствует
+        """
+        print(f"\n🔍 Проверка наличия обязательных полей:")
+        print(f"   Обязательные поля: {required_fields}")
+        print(f"   Поля в ответе: {list(data.keys())}")
+
+        missing_fields: List[str] = []
+
+        for field in required_fields:
+            if field not in data:
+                missing_fields.append(field)
+
+        assert not missing_fields, \
+            f"Отсутствуют обязательные поля: {missing_fields}"
+
+        print(f"   ✅ Все обязательные поля присутствуют")
         return True

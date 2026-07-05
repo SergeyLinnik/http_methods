@@ -4,6 +4,7 @@
 Содержит методы для выполнения запросов к Google Maps API.
 """
 
+import requests
 from http_methods import HTTPMethods
 
 
@@ -28,21 +29,12 @@ class GoogleMapsAPI:
     def create_place(lat: float = -38.383494,
                      lng: float = 33.427362,
                      name: str = "Frontline house",
-                     address: str = "29, side layout, cohen 09") -> dict:
+                     address: str = "29, side layout, cohen 09") -> tuple[dict, requests.Response]:
         """
         Создание нового места через POST запрос к Google Maps API.
 
-        Args:
-            lat: Широта (по умолчанию -38.383494)
-            lng: Долгота (по умолчанию 33.427362)
-            name: Название места (по умолчанию "Frontline house")
-            address: Адрес (по умолчанию "29, side layout, cohen 09")
-
         Returns:
-            Ответ API в виде словаря
-
-        Raises:
-            AssertionError: Если запрос не удался
+            Кортеж (ответ API в виде словаря, response объект)
         """
         url: str = (
             f"{GoogleMapsAPI.BASE_URL}"
@@ -83,25 +75,16 @@ class GoogleMapsAPI:
         assert place_id is not None, "В ответе отсутствует поле place_id"
 
         print(f"   ✅ Место создано! place_id: {place_id}")
-        return response_json
+        return response_json, response
 
     # ------------------------------------------------------------------------
     # МЕТОД GET: ПОЛУЧЕНИЕ МЕСТА ПО PLACE_ID
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def get_place(place_id: str) -> dict:
+    def get_place(place_id: str) -> tuple[dict, requests.Response]:
         """
-        Получение данных о месте через GET запрос к Google Maps API.
-
-        Args:
-            place_id: Идентификатор места
-
-        Returns:
-            Данные о месте в виде словаря
-
-        Raises:
-            AssertionError: Если запрос не удался или место не найдено
+        Получение данных о месте через GET запрос.
         """
         url: str = (
             f"{GoogleMapsAPI.BASE_URL}"
@@ -126,26 +109,16 @@ class GoogleMapsAPI:
             assert False, f"Место не найдено: {response_json.get('msg')}"
 
         print(f"   ✅ Данные о месте получены")
-        return response_json
+        return response_json, response
 
     # ------------------------------------------------------------------------
     # МЕТОД PUT: ОБНОВЛЕНИЕ АДРЕСА МЕСТА
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def update_place(place_id: str, new_address: str) -> dict:
+    def update_place(place_id: str, new_address: str) -> tuple[dict, requests.Response]:
         """
-        Обновление адреса места через PUT запрос к Google Maps API.
-
-        Args:
-            place_id: Идентификатор места
-            new_address: Новый адрес
-
-        Returns:
-            Ответ API в виде словаря
-
-        Raises:
-            AssertionError: Если запрос не удался
+        Обновление адреса места через PUT запрос.
         """
         url: str = (
             f"{GoogleMapsAPI.BASE_URL}"
@@ -179,25 +152,16 @@ class GoogleMapsAPI:
             f"Адрес не обновлен: {response_json.get('msg')}"
 
         print(f"   ✅ Адрес обновлен: {response_json.get('msg')}")
-        return response_json
+        return response_json, response
 
     # ------------------------------------------------------------------------
     # МЕТОД DELETE: УДАЛЕНИЕ МЕСТА
     # ------------------------------------------------------------------------
 
     @staticmethod
-    def delete_place(place_id: str) -> dict:
+    def delete_place(place_id: str) -> tuple[dict, requests.Response]:
         """
-        Удаление места через DELETE запрос к Google Maps API.
-
-        Args:
-            place_id: Идентификатор места
-
-        Returns:
-            Ответ API в виде словаря
-
-        Raises:
-            AssertionError: Если запрос не удался
+        Удаление места через DELETE запрос.
         """
         url: str = (
             f"{GoogleMapsAPI.BASE_URL}"
@@ -226,50 +190,4 @@ class GoogleMapsAPI:
             f"Статус ответа не 'OK': {response_json}"
 
         print(f"   ✅ Место удалено!")
-        return response_json
-
-    # ------------------------------------------------------------------------
-    # ДОПОЛНИТЕЛЬНЫЙ МЕТОД: ПРОВЕРКА СУЩЕСТВОВАНИЯ МЕСТА
-    # ------------------------------------------------------------------------
-
-    @staticmethod
-    def place_exists(place_id: str) -> bool:
-        """
-        Проверка существования места по place_id.
-
-        Args:
-            place_id: Идентификатор места
-
-        Returns:
-            True если место существует, False если нет
-        """
-        try:
-            GoogleMapsAPI.get_place(place_id)
-            return True
-        except AssertionError:
-            return False
-
-    # ------------------------------------------------------------------------
-    # ДОПОЛНИТЕЛЬНЫЙ МЕТОД: ПРОВЕРКА ОБНОВЛЕНИЯ АДРЕСА
-    # ------------------------------------------------------------------------
-
-    @staticmethod
-    def verify_address_updated(place_id: str, expected_address: str) -> bool:
-        """
-        Проверка, что адрес был обновлен (через GET запрос).
-
-        Args:
-            place_id: Идентификатор места
-            expected_address: Ожидаемый адрес
-
-        Returns:
-            True если адрес совпадает, False если нет
-        """
-        place_data = GoogleMapsAPI.get_place(place_id)
-        actual_address: str = place_data.get("address", "")
-
-        print(f"\n   🔍 Проверка обновления адреса:")
-        print(f"   Ожидаемый адрес: {expected_address}")
-        print(f"   Фактический адрес: {actual_address}")
-
-        return actual_address == expected_address
+        return response_json, response
