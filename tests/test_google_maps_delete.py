@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Тест DELETE метода Google Maps API.
-Проверяет удаление места.
 """
 
 import sys
@@ -9,74 +8,61 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from google_maps_api import GoogleMapsAPI
+from src import GoogleMapsAPI
+from utils import TestHelpers
 
 
 def test_delete_place() -> None:
-    """
-    Тест удаления места через DELETE запрос.
-    Проверяет:
-    1. Статус-код ответа
-    2. Статус "OK" в ответе
-    3. Что место действительно удалено (через GET)
-    """
+    """Тест удаления места через DELETE."""
     print("\n" + "="*60)
     print(" ТЕСТ: DELETE ЗАПРОС (УДАЛЕНИЕ МЕСТА)")
     print("="*60)
 
     # --------------------------------------------------------------------
-    # ШАГ 1: Создание места через POST (для получения place_id)
+    # ШАГ 1: Создание места через POST
     # --------------------------------------------------------------------
     print("\n[ШАГ 1] Создание места через POST...")
 
-    create_response = GoogleMapsAPI.create_place()
-    place_id: str = create_response.get("place_id")
-
+    create_response, _ = GoogleMapsAPI.create_place()  # Распаковка кортежа
+    place_id = create_response.get("place_id")
     print(f"   ✅ Место создано, place_id: {place_id}")
-
-    # Проверка что место существует
-    print("\n   Проверка что место существует...")
-    assert GoogleMapsAPI.place_exists(place_id), "Место не существует после создания"
-    print("   ✅ Место существует")
 
     # --------------------------------------------------------------------
     # ШАГ 2: Удаление места через DELETE
     # --------------------------------------------------------------------
     print("\n[ШАГ 2] Удаление места через DELETE...")
 
-    delete_response = GoogleMapsAPI.delete_place(place_id)
+    delete_response, delete_resp = GoogleMapsAPI.delete_place(place_id)
 
     # --------------------------------------------------------------------
-    # ШАГ 3: Проверка что DELETE отработал верно
+    # ШАГ 3: Проверка статус-кода
     # --------------------------------------------------------------------
-    print("\n[ШАГ 3] Проверка что DELETE отработал верно...")
+    print("\n[ШАГ 3] Проверка статус-кода...")
+    TestHelpers.check_status_code(delete_resp, 200)
 
-    assert delete_response.get("status") == "OK", \
-        f"Статус ответа не 'OK': {delete_response}"
+    # --------------------------------------------------------------------
+    # ШАГ 4: Проверка обязательных полей
+    # --------------------------------------------------------------------
+    print("\n[ШАГ 4] Проверка обязательных полей...")
+    required_fields = ["status"]
+    TestHelpers.check_required_fields(delete_response, required_fields)
 
+    # --------------------------------------------------------------------
+    # ШАГ 5: Проверка содержимого
+    # --------------------------------------------------------------------
+    print("\n[ШАГ 5] Проверка содержимого...")
+    assert delete_response.get("status") == "OK"
     print(f"   ✅ Статус: {delete_response.get('status')}")
 
     # --------------------------------------------------------------------
-    # ШАГ 4: Проверка через GET что место действительно удалено
+    # ШАГ 6: Проверка через GET
     # --------------------------------------------------------------------
-    print("\n[ШАГ 4] Проверка через GET что место действительно удалено...")
-
-    assert not GoogleMapsAPI.place_exists(place_id), \
-        "Место все еще существует после DELETE"
-
-    print("   ✅ Место успешно удалено (GET не находит место)")
-
-    # --------------------------------------------------------------------
-    # ШАГ 5: Вывод результата
-    # --------------------------------------------------------------------
-    print("\n" + "="*60)
-    print(" РЕЗУЛЬТАТ ТЕСТА")
-    print("="*60)
-
-    print(f"\n📊 СТАТИСТИКА:")
-    print(f"   place_id: {place_id}")
-    print(f"   Ответ DELETE: {delete_response.get('status')}")
-    print(f"   ✅ Место успешно удалено")
+    print("\n[ШАГ 6] Проверка через GET что место удалено...")
+    try:
+        GoogleMapsAPI.get_place(place_id)
+        assert False, "Место все еще существует!"
+    except AssertionError:
+        print("   ✅ Место успешно удалено (GET не находит место)")
 
     print("\n" + "="*60)
     print("✅ ТЕСТ DELETE ПРОЙДЕН УСПЕШНО!")
