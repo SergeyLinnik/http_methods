@@ -8,8 +8,8 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from google_maps_api import GoogleMapsAPI
-from http_methods import HTTPMethods
+from src import GoogleMapsAPI
+from utils import TestHelpers
 
 
 def test_create_place() -> None:
@@ -22,11 +22,11 @@ def test_create_place() -> None:
     response_json, response = GoogleMapsAPI.create_place()
 
     print("\n[ШАГ 2] Проверка статус-кода...")
-    HTTPMethods.check_status_code(response, 200)
+    TestHelpers.check_status_code(response, 200)
 
     print("\n[ШАГ 3] Проверка обязательных полей...")
     required_fields = ["status", "place_id", "scope", "reference", "id"]
-    HTTPMethods.check_required_fields(response_json, required_fields)
+    TestHelpers.check_required_fields(response_json, required_fields)
 
     print("\n[ШАГ 4] Проверка содержимого...")
     assert response_json.get("status") == "OK"
