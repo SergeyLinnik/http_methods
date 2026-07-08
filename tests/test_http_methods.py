@@ -8,7 +8,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from http_methods import HTTPMethods
+from src.http_methods import HTTPMethods
 
 
 def test_get_method() -> None:
