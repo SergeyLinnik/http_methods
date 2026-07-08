@@ -28,10 +28,13 @@ def test_create_place() -> None:
     required_fields = ["status", "place_id", "scope", "reference", "id"]
     TestHelpers.check_required_fields(response_json, required_fields)
 
-    print("\n[ШАГ 4] Проверка содержимого...")
-    assert response_json.get("status") == "OK"
-    assert response_json.get("place_id") is not None
-    assert response_json.get("scope") == "APP"
+    print("\n[ШАГ 4] Проверка содержимого полей...")
+    TestHelpers.check_field_value(response_json, "status", "OK", "статус ответа")
+    TestHelpers.check_field_value(response_json, "scope", "APP", "область действия")
+
+    place_id = response_json.get("place_id")
+    assert place_id is not None
+    print(f"\n   ✅ place_id: {place_id}")
 
     print("\n" + "="*60)
     print("✅ ТЕСТ POST ПРОЙДЕН УСПЕШНО!")

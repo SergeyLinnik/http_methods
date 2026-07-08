@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Вспомогательные методы для тестирования.
-Содержат проверки статус-кода и обязательных полей.
+Содержат проверки статус-кода, обязательных полей и содержимого полей.
 """
 
 import requests
-from typing import List, Any
+from typing import List, Any, Optional
 
 
 class TestHelpers:
@@ -55,3 +55,38 @@ class TestHelpers:
         assert not missing_fields, \
             f"Отсутствуют обязательные поля: {missing_fields}"
         print(f"   ✅ Все обязательные поля присутствуют")
+
+    # ------------------------------------------------------------------------
+    # НОВЫЙ МЕТОД: ПРОВЕРКА СОДЕРЖИМОГО ПОЛЕЙ
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def check_field_value(data: dict, field_name: str, expected_value: Any,
+                          field_description: Optional[str] = None) -> None:
+        """
+        Проверка значения конкретного поля в словаре.
+
+        Args:
+            data: Словарь с данными для проверки
+            field_name: Имя проверяемого поля
+            expected_value: Ожидаемое значение поля
+            field_description: Описание поля (для вывода, опционально)
+
+        Raises:
+            AssertionError: Если поле отсутствует или значение не совпадает
+        """
+        field_desc: str = field_description or field_name
+        actual_value: Any = data.get(field_name)
+
+        print(f"\n🔍 Проверка содержимого поля '{field_desc}':")
+        print(f"   Ожидаемое значение: {expected_value}")
+        print(f"   Фактическое значение: {actual_value}")
+
+        assert field_name in data, \
+            f"Поле '{field_name}' отсутствует в ответе"
+
+        assert actual_value == expected_value, \
+            f"Значение поля '{field_name}' не совпадает! " \
+            f"Ожидалось: {expected_value}, получено: {actual_value}"
+
+        print(f"   ✅ Поле '{field_desc}' содержит ожидаемое значение")
